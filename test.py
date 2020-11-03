@@ -5,10 +5,12 @@ import numpy as np
 from scipy.fftpack import fft
 import scipy.signal as signal
 import QRS_detector1
+from wfdb import processing
 def read_data(filename):#读取心电数据
-    global record
-    record=wfdb.rdrecord(filename,physical=False,channels=[0]).d_signal.flatten()  #原始数据单个元素存在中括号，使用flatten
-    return record
+    # record=wfdb.rdrecord(filename,physical=False,channels=[0]).d_signal.flatten()  #原始数据单个元素存在中括号，使用flatten
+    record,field=wfdb.rdsamp(filename,channels=[0])
+    record=record.flatten()
+    return record,field
 def draw_spectrum(x):  #画频谱函数
     y = np.abs(fft(x) / len(x))
     y1 = y[1:int(len(x) / 2)+1]
@@ -25,7 +27,6 @@ def wavelet(x):
     # cof[7].fill(0)
     # cof[8].fill(0)
     # basline=pywt.waverec(coeffs=cof,wavelet='db8')
-
     D2.fill(0)
     D1.fill(0)
     A8.fill(0)
@@ -34,6 +35,10 @@ def wavelet(x):
         coffee[i] = pywt.threshold(coffee[i], threshold)
     rdata = pywt.waverec(coeffs=coffee, wavelet='db8')
     return rdata
+def R_peaks(x):
+    peaks=processing.XQRS(x,fs=360)
+    peaks.detect()
+    return peaks
 def band_filter(x,start,end,type):
     global data
     f1=start/180
@@ -54,11 +59,12 @@ if __name__=="__main__":
     plt.rcParams['figure.dpi'] = 300
       # 分辨率
     x='101'
-    read_data(x)
+    record,field=read_data(x)
     band_filter(record,55,65,True)
     data[0:100]=min(data[100:300])
     rdata=wavelet(data)
-    #draw_spectrum(rdata)
+    peak=R_peaks(radta)
+    print(len(peak.qrs_inds))
     # d=QRS_detectorpan_detectors(32,data)
     #plt.plot(d[0:20],data[d[0:20]],'or')
     # plt.plot(data[0:10000])
