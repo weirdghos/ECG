@@ -1,4 +1,6 @@
+from matplotlib.pyplot import colorbar
 import pywt
+import scipy
 import wfdb
 import matplotlib.pyplot as plt
 import numpy as np
@@ -63,9 +65,13 @@ if __name__=="__main__":
     band_filter(record,55,65,True)
     data[0:100]=min(data[100:300])
     rdata=wavelet(data)
-    peak=R_peaks(radta)
-    print(len(peak.qrs_inds))
+    b,a=signal.butter(40,0.28,btype='low',analog=False)
+    data2=signal.filtfilt(b,a,rdata)
+    plt.plot(rdata[:1000],color='red')
+    plt.plot(data2[:1000])
+    plt.show()
+    #peak=R_peaks(rdata)
+    
     # d=QRS_detectorpan_detectors(32,data)
     #plt.plot(d[0:20],data[d[0:20]],'or')
     # plt.plot(data[0:10000])
-    # plt.show()
