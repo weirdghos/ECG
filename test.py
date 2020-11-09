@@ -1,4 +1,5 @@
 from matplotlib.pyplot import colorbar
+from numpy.core.numeric import normalize_axis_tuple
 import pywt
 import scipy
 import wfdb
@@ -29,12 +30,14 @@ def wavelet(x):
     # cof[7].fill(0)
     # cof[8].fill(0)
     # basline=pywt.waverec(coeffs=cof,wavelet='db8')
+    #软阈值进行滤波 消除肌电干扰噪声
+    threshold = (np.median(np.abs(D1)) / 0.6745) * (np.sqrt(2 * np.log(len(D1))))
+    
+    for i in range(1, len(coffee) - 2):
+        coffee[i] = pywt.threshold(coffee[i], threshold) 
     D2.fill(0)
     D1.fill(0)
     A8.fill(0)
-    threshold = (np.median(np.abs(D1)) / 0.6745) * (np.sqrt(2 * np.log(len(D1))))
-    for i in range(1, len(coffee) - 2):
-        coffee[i] = pywt.threshold(coffee[i], threshold)
     rdata = pywt.waverec(coeffs=coffee, wavelet='db8')
     return rdata
 def R_peaks(x):
@@ -56,6 +59,8 @@ def draw_time(x,y,start,end):
     else:
         plt.plot(x[start:end],y[start:end],'or')
         plt.show()
+
+
 if __name__=="__main__":
     plt.rcParams['savefig.dpi'] = 300  # 图片像素
     plt.rcParams['figure.dpi'] = 300
@@ -67,8 +72,8 @@ if __name__=="__main__":
     rdata=wavelet(data)
     b,a=signal.butter(40,0.28,btype='low',analog=False)
     data2=signal.filtfilt(b,a,rdata)
-    plt.plot(rdata[:1000],color='red')
-    plt.plot(data2[:1000])
+    plt.plot(rdata[:10000])
+    
     plt.show()
     #peak=R_peaks(rdata)
     
