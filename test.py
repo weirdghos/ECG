@@ -37,8 +37,9 @@ def wavelet(x):
         coffee[i] = pywt.threshold(coffee[i], threshold) 
     D2.fill(0)
     D1.fill(0)
+    D3.fill(0)
     A8.fill(0)
-    rdata = pywt.waverec(coeffs=coffee, wavelet='db8')
+    rdata = pywt.waverec(coeffs=coffee, wavelet='db8')   #心电信号有效范围0.5--45HZ D3 45--90HZ 置零
     return rdata
 def R_peaks(x):
     peaks=processing.XQRS(x,fs=360)
