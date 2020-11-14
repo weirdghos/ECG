@@ -1,13 +1,9 @@
-from matplotlib.pyplot import colorbar
-from numpy.core.numeric import normalize_axis_tuple
 import pywt
-import scipy
 import wfdb
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.fftpack import fft
 import scipy.signal as signal
-import QRS_detector1
 from wfdb import processing
 def read_data(filename):#读取心电数据
     # record=wfdb.rdrecord(filename,physical=False,channels=[0]).d_signal.flatten()  #原始数据单个元素存在中括号，使用flatten
@@ -17,6 +13,8 @@ def read_data(filename):#读取心电数据
 def draw_spectrum(x):  #画频谱函数
     y = np.abs(fft(x) / len(x))
     y1 = y[1:int(len(x) / 2)+1]
+    c=np.max(abs(y1))
+    print(y1)
     freqs=np.linspace(0, 180, int(len(x)/2))
     plt.plot(freqs,y1)
     plt.show()
@@ -61,21 +59,19 @@ def draw_time(x,y,start,end):
         plt.plot(x[start:end],y[start:end],'or')
         plt.show()
 
-
 if __name__=="__main__":
     plt.rcParams['savefig.dpi'] = 300  # 图片像素
     plt.rcParams['figure.dpi'] = 300
       # 分辨率
     x='101'
     record,field=read_data(x)
+    draw_spectrum(record[0:2000])
     band_filter(record,55,65,True)
     data[0:100]=min(data[100:300])
+    band_filter(data,)
     rdata=wavelet(data)
     b,a=signal.butter(40,0.28,btype='low',analog=False)
     data2=signal.filtfilt(b,a,rdata)
-    plt.plot(rdata[:10000])
-    
-    plt.show()
     #peak=R_peaks(rdata)
     
     # d=QRS_detectorpan_detectors(32,data)
