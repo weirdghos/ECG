@@ -10,7 +10,7 @@ class sig():
      snr=10*np.log10(np.sum(self.original_signal**2)/np.sum((self.reconstructed_signal-self.original_signal)**2))
      return snr
   def PRD(self):   #百分比均方根误差
-     prd=np.sqrt((self.reconstructed_signal-self.original_signal)**2 /self.original_signal)   #公式可能有问题 再找一哈
+     prd=np.sqrt(np.sum(((self.reconstructed_signal-self.original_signal)**2)/self.original_signal**2))   #公式可能有问题 再找一哈
      return prd
   def MSE(self): #均方误差
      mse=(np.sum((self.original_signal-self.reconstructed_signal)**2))/len(self.original_signal)

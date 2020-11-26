@@ -13,9 +13,13 @@ def read_data(filename):#读取心电数据
 def draw_spectrum(x):  #画频谱函数
     y = np.abs(fft(x) / len(x))
     y1 = y[1:int(len(x) / 2)+1]
-    c=np.max(abs(y1))
-    print(y1)
     freqs=np.linspace(0, 180, int(len(x)/2))
+    plt.plot(freqs,y1)
+    plt.show()
+def draw_PSD(x): 
+    y=np.abs(fft(x)**2/len(x))
+    y1=y[1:int(len(x)/2)+1]
+    freqs=np.linspace(0,180,int(len(x)/2))
     plt.plot(freqs,y1)
     plt.show()
 def wavelet(x):
